@@ -1,14 +1,14 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import classnames from 'classnames'
+import TextField from '@material-ui/core/TextField';
+import MenuItem from '@material-ui/core/MenuItem';
 
 export default class CostTextInput extends Component {
     static propTypes = {
         onSave: PropTypes.func.isRequired,
         text: PropTypes.string,
-        placeholder: PropTypes.string,
-        editing: PropTypes.bool,
-        isNewCost: PropTypes.bool
+        value: PropTypes.string,
+        category: PropTypes.string,
     };
 
     state = {
@@ -17,7 +17,6 @@ export default class CostTextInput extends Component {
 
     handleSubmit = e => {
         if (e.which !== 13) return;
-
         const text = e.target.value.trim();
         this.props.onSave(text);
         if (this.props.isNewCost)
@@ -34,19 +33,54 @@ export default class CostTextInput extends Component {
     };
 
     render() {
+        const currencies = [
+            {
+                value: 'USD',
+                label: '$',
+            },
+            {
+                value: 'EUR',
+                label: '€',
+            },
+            {
+                value: 'BTC',
+                label: '฿',
+            },
+            {
+                value: 'JPY',
+                label: '¥',
+            },
+        ];
+        const {text, value, category} = this.state;
         return (
-            <input className={
-                classnames({
-                    edit: this.props.editing,
-                    'new-cost': this.props.isNewCost
-                })}
-                   type="text"
-                   placeholder={this.props.placeholder}
-                   autoFocus={true}
-                   value={this.state.text}
-                   onBlur={this.handleBlur}
-                   onChange={this.handleChange}
-                   onKeyDown={this.handleSubmit}/>
+            <React.Fragment>
+                <TextField
+                    label="Value"
+                    value={value}
+                    type="number"
+                    margin="normal"
+                />
+                <TextField
+                    label="Name"
+                    value={text}
+                    onBlur={this.handleBlur}
+                    onChange={this.handleChange}
+                    onKeyDown={this.handleSubmit}
+                    margin="normal"
+                />
+                <TextField
+                    select
+                    label="Select"
+                    helperText="Please select your currency"
+                    margin="normal">
+                    {currencies.map(option => (
+                        <MenuItem key={option.value} value={option.value}>
+                            {option.label}
+                        </MenuItem>
+                    ))}
+                </TextField>
+            </React.Fragment>
+
         )
     }
 }

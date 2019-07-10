@@ -29,9 +29,9 @@ export default function expensesDuck(state = initialState, action) {
 
         case EDIT_EXPENSE:
             return state.map(todo =>
-                todo.id === action.id ?
-                    { ...todo, text: action.text } :
-                    todo
+                todo.id === action.id
+                    ? { ...todo, ...action.update }
+                    : todo
             );
 
         default:

@@ -1,14 +1,22 @@
 import React from 'react'
 import CostItem from './CostItem'
-
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import CostTextInput from './CostTextInput';
 
 const CostsList = ({ costs, actions }) => (
     <React.Fragment>
-        <ul className="expenses-list">
+        <CostTextInput
+            isNewCost
+            placeholder="What needs to be done?"
+        />
+        <List>
             {costs.map(cost =>
-                <CostItem key={cost.id} cost={cost} {...actions} />
+                <ListItem key={cost.id}>
+                    <CostItem cost={cost} {...actions} />
+                </ListItem>
             )}
-        </ul>
+        </List>
     </React.Fragment>
 );
 
