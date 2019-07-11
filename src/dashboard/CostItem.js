@@ -1,17 +1,32 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import CostTextInput from './CostTextInput'
+import CostItemEditor from './CostItemEditor'
 import IconButton from '@material-ui/core/IconButton';
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
+import { withStyles } from '@material-ui/styles';
 
-export default class CostItem extends Component {
-    constructor(props) {
-        super(props);
+
+const styles = {
+    root: {
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        width: '800px'
+    },
+    label: {
+        fontSize: '13px',
+        marginRight: '6px',
+        color: 'grey'
     }
+};
+
+class CostItem extends Component {
 
     static propTypes = {
         cost: PropTypes.object.isRequired,
+        type: PropTypes.string,
         edit: PropTypes.func.isRequired,
         remove: PropTypes.func.isRequired
     };
@@ -20,17 +35,13 @@ export default class CostItem extends Component {
         editing: false
     };
 
-    handleDoubleClick = () => {
+    handleEdit = () => {
         this.setState({ editing: true })
     };
 
-    handleSave = (text) => {
-        const { id } = this.props.cost;
-        if (text.length === 0) {
-            this.props.remove(id)
-        } else {
-            this.props.edit(id, { text })
-        }
+    handleSave = (update) => {
+        const { cost, edit } = this.props;
+        edit(cost.id, update);
         this.setState({ editing: false })
     };
 
@@ -41,22 +52,26 @@ export default class CostItem extends Component {
 
     renderEditMode() {
         const { cost } = this.props;
-        return (<CostTextInput text={cost.text}
-                               editing={true}
-                               onSave={this.handleSave}/>);
+        return (<CostItemEditor {...cost}
+                                onSave={this.handleSave}/>);
     }
 
     renderViewMode() {
-        const { cost } = this.props;
-        return (<div className="view">
-            <span>{cost.text} </span>
-            <IconButton aria-label="Delete" onClick={this.handleDoubleClick}>
-                <EditIcon fontSize="small"/>
-            </IconButton>
-            <IconButton aria-label="Delete" onClick={this.handleRemove}>
-                <DeleteIcon fontSize="small"/>
-            </IconButton>
-        </div>)
+        const { cost, classes } = this.props;
+        return (
+            <div className={classes.root}>
+                <div><span className={classes.label}>Name: </span><span>{cost.text}</span></div>
+                <div><span className={classes.label}>Value:</span><span>{cost.value}</span></div>
+                <div><span className={classes.label}>Category:</span><span>{cost.category}</span></div>
+                <div>
+                    <IconButton aria-label="Edit" onClick={this.handleEdit}>
+                        <EditIcon fontSize="small"/>
+                    </IconButton>
+                    <IconButton aria-label="Delete" onClick={this.handleRemove}>
+                        <DeleteIcon fontSize="small"/>
+                    </IconButton>
+                </div>
+            </div>)
     }
 
     render() {
@@ -64,3 +79,6 @@ export default class CostItem extends Component {
         return editing ? this.renderEditMode() : this.renderViewMode();
     }
 }
+
+
+export default withStyles(styles)(CostItem);
